@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Game with jQuery and Twitter Bootstrap</title>
+
+    <meta http-equiv='Content-type' content='text/html; charset=utf-8'>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+
+    <link rel="icon" href="img/minion.png">
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="css/game.css" />
+
+      <script src="js/jquery/jquery-1.11.3.min.js"></script>
+      <script src="js/game.js"></script>
+
+      <script type="text/javascript">
+      $(document).ready(function() {
+          var newGame = new Game("game");
+      });
+      </script>
+  </head>
+  <body>
+    <div id="game" class="clearfix">
+        <h1>Game with jQuery and Twitter Bootstrap</h1>
+        <div class="map" class="clearfix">
+            <div id="north">
+                <h2>North</h2>
+                <div class="spawn left">L </div>
+                <div class="spawn right">R</div>
+                <div class="spawn middle">M</div>
+            </div>
+            <hr />
+            <div id="south">
+                <div class="spawn left">L</div>
+                <div class="spawn right">R</div>
+                <div class="spawn middle">M</div>
+                <h2>South</h2>
+            </div>
+        </div>
+        <div class="map">
+            <h1>Scoreboard</h1>
+            <div>Team 1 - Players: <span id="players1">0</span>, Score: <span id="score1">0</span></div>
+            <div>Team 2 - Players: <span id="players2">0</span>, Score: <span id="score2">0</span></div>
+        </div>
+        <div class="map">
+            <button type="button" id="addTeam">Add Team</button>
+            <button type="button" id="addPlayer1">Add Player to Team 1</button>
+            <button type="button" id="addPlayer2">Add Player to Team 2</button>
+        </div>
+    </div>
+  </body>
+</html>

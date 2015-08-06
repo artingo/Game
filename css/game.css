@@ -1,0 +1,31 @@
+h2 {
+    text-align: center;
+}
+#game {
+    width:  60%;
+    margin: 1em auto;
+}
+.map {
+    /*width:  40%;*/
+    margin: 1em;
+    padding:1em;
+    /*float:  left;*/
+}
+.map,
+.spawn {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+.spawn {
+    width:  8em;
+    height: 8em;
+}
+.left {
+    float:  left;
+}
+.middle {
+    margin: 0 auto;
+}
+.right {
+    float:  right;
+}
