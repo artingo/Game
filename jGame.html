@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="css/game.css" />
 
       <script src="js/jquery/jquery-1.11.3.min.js"></script>
+      <script src="js/bootstrap/bootstrap.min.js"></script>
       <script src="js/game.js"></script>
 
       <script type="text/javascript">
@@ -31,7 +32,12 @@
                 <div class="spawn right">R</div>
                 <div class="spawn middle">M</div>
             </div>
+
+            <div id="alert" class="alert alert-danger fade in" role="alert">
+                <span class="message">No more teams allowed!</span>
+            </div>
             <hr />
+
             <div id="south">
                 <div class="spawn left">L</div>
                 <div class="spawn right">R</div>
@@ -40,14 +46,23 @@
             </div>
         </div>
         <div class="map">
-            <h1>Scoreboard</h1>
-            <div>Team 1 - Players: <span id="players1">0</span>, Score: <span id="score1">0</span></div>
-            <div>Team 2 - Players: <span id="players2">0</span>, Score: <span id="score2">0</span></div>
-        </div>
-        <div class="map">
-            <button type="button" id="addTeam">Add Team</button>
-            <button type="button" id="addPlayer1">Add Player to Team 1</button>
-            <button type="button" id="addPlayer2">Add Player to Team 2</button>
+            <div class="right btn-group-vertical">
+                <button type="button" id="addTeam" class="btn btn-default clearfix">
+                    <span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span>
+                    Add Team
+                </button>
+                <button type="button" id="addPlayer1" class="btn btn-default">
+                    <span class="glyphicon glyphicon-tower" aria-hidden="true"></span>
+                    Add Player to Team 1
+                </button>
+                <button type="button" id="addPlayer2" class="btn btn-default">
+                    <span class="glyphicon glyphicon-knight" aria-hidden="true"></span>
+                    Add Player to Team 2
+                </button>
+            </div>
+                <h3>Scoreboard</h3>
+                <div>Team 1 - Players: <span id="players1">0</span>, Score: <span id="score1">0</span></div>
+                <div>Team 2 - Players: <span id="players2">0</span>, Score: <span id="score2">0</span></div>
         </div>
     </div>
   </body>

@@ -6,19 +6,21 @@ h2 {
     margin: 1em auto;
 }
 .map {
-    /*width:  40%;*/
+    min-width:  380px;
     margin: 1em;
     padding:1em;
     /*float:  left;*/
 }
 .map,
 .spawn {
-    border: 1px solid #ddd;
-    border-radius: 6px;
+    border: 2px solid #ddd;
+    border-radius: 20px;
 }
 .spawn {
-    width:  8em;
-    height: 8em;
+    width:  10em;
+    height: 10em;
+    text-align: center;
+    vertical-align: middle;
 }
 .left {
     float:  left;
@@ -28,4 +30,14 @@ h2 {
 }
 .right {
     float:  right;
+}
+
+.team1 {
+    background-image: url("../img/german_flag.jpg")
+}
+.team2 {
+    background-image: url("../img/queensland_flag.jpg")
+}
+#alert {
+    display: none;
 }

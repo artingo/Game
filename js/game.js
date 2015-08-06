@@ -69,8 +69,8 @@ function Game(id) {
 
   // click handlers
   $("#addTeam").on("click", $.proxy(function() { this.addTeam(new Team()); }, this));
-  $("#addPlayer1").on("click", $.proxy(function() { this.addPlayerToTeam(0); }, this));
-  $("#addPlayer2").on("click", $.proxy(function() { this.addPlayerToTeam(1); }, this));
+  $("#addPlayer1").on("click", $.proxy(function() { this.addPlayerToTeam(1); }, this));
+  $("#addPlayer2").on("click", $.proxy(function() { this.addPlayerToTeam(2); }, this));
 
   // add custom event handler
   var selector = id? "#"+id : ".game";
@@ -150,19 +150,45 @@ Game.prototype = {
     console.log("[addTeam]\truleTwoTeams:"+rule1failed+", ruleFivePlayers:"+rule2failed+", both:"+ (rule1failed || rule2failed));
     if (rule1failed || rule2failed) {
       // do not add team
-      console.log("[addTeam]\tno more teams allowed");
+      console.log("[addTeam]\tNo more teams allowed");
+      $("#alert .message").text("No more teams allowed");
+      $("#alert").show();
     } else {
+      $("#alert").hide();
       this.teams.push(newTeam);
+      var teamIndex = this.teams.length;
+      this.drawTeam(teamIndex);
     }
   },
 
   spawnObjective: function(spawnPoint) {},
 
-  addPlayerToTeam:  function(teamIndex) {
-    console.log("[addPlayerToTeam] Team " + (teamIndex+1));
-
+  addPlayerToTeam:  function(teamNumber) {
+    console.log("[addPlayerToTeam]\tTeam " + teamNumber);
+    var mapField = (teamNumber == 1)? "#north .left" : "#south .right";
+    if(teamNumber <= this.teams.length) {
+      var selectedTeam = this.teams[teamNumber - 1];
+      selectedTeam.newPlayerWantsToPlay = true;
+      if(Rules.fivePlayersRequired(selectedTeam)) {
+        // don't add player
+        console.log("[addPlayerToTeam]\tOnly 5 players allowed for Team " +teamNumber);
+        $("#alert .message").text("Only 5 players allowed for Team " +teamNumber);
+        $("#alert").show();
+      } else {
+        $("#alert").hide();
+        selectedTeam.addPlayer(new Player());
+        $(mapField).append("<img src='img/minion.png'/>");
+        $("#players"+teamNumber).text(selectedTeam.players.length);
+      }
+    } else {
+      console.log("[addPlayerToTeam]\tAdd teams, first");
+      $("#alert .message").text("Add teams, first");
+      $("#alert").show();
+    }
   },
-  drawTeam: function(team) {
-
+  drawTeam: function(teamNumber) {
+    console.log("[drawTeam]\t Team number: "+teamNumber);
+    var mapField = (teamNumber == 1)? "#north .left" : "#south .right";
+    $(mapField).removeClass("team1 team2").addClass("team"+teamNumber);
   }
 };
