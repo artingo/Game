@@ -2,25 +2,19 @@ h2 {
     text-align: center;
 }
 #game {
-    width:  60%;
     margin: 1em auto;
-}
-.map {
-    min-width:  380px;
-    margin: 1em;
-    padding:1em;
-    /*float:  left;*/
-}
-.map,
-.spawn {
-    border: 2px solid #ddd;
-    border-radius: 20px;
 }
 .spawn {
     width:  10em;
     height: 10em;
     text-align: center;
     vertical-align: middle;
+    border: 2px solid #ddd;
+    border-radius: 20px;
+}
+
+.spawn.disabled {
+    border: none;
 }
 .left {
     float:  left;
@@ -38,6 +32,13 @@ h2 {
 .team2 {
     background-image: url("../img/queensland_flag.jpg")
 }
-#alert {
+
+#alert,
+#waitPanel {
     display: none;
+}
+#waitPanel {
+    position: absolute;
+    left:   34%;
+    top:    34%;
 }
