@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Game with jQuery and Twitter Bootstrap</title>
+    <title>Game with jQuery and Bootstrap</title>
 
     <meta http-equiv='Content-type' content='text/html; charset=utf-8'>
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -26,99 +26,114 @@
 
     <div id="game" class="container">
 
-        <div class="panel panel-info">
-            <div class="panel-heading">
-                <h3 class="panel-title">Game with jQuery and Twitter Bootstrap</h3>
-            </div>
-            <div class="panel-body">
+        <div class="page-header">
+            <h1>Game with jQuery and Bootstrap</h1>
 
-                <div class="row">
-                    <div class="col-sm-8">
-                        <div class="panel panel-success">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">Map</h3>
+            <div class="row">
+                <div class="col-sm-8">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Map</h3>
+                        </div>
+                        <div class="panel-body">
+
+                            <div id="north">
+                                <h2>North</h2>
+                                <div class="spawn left"></div>
+                                <div class="spawn right"></div>
+                                <div class="spawn middle"></div>
                             </div>
-                            <div class="panel-body">
 
-                                <div id="north">
-                                    <h2>North</h2>
-                                    <div class="spawn left"></div>
-                                    <div class="spawn right"></div>
-                                    <div class="spawn middle"></div>
-                                </div>
+                            <div id="alert" class="alert alert-danger fade in" role="alert">
+                                <span class="message">You cannot exceed the Allowed Number of Teams for the Game</span>
+                            </div>
 
-                                <div id="alert" class="alert alert-danger fade in" role="alert">
-                                    <span class="message">You cannot exceed the Allowed Number of Teams for the Game</span>
-                                </div>
-
-                                <div id="waitPanel" class="col-sm-4">
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading">
-                                            <h3 class="panel-title">Waiting for next objective...</h3>
-                                        </div>
-                                        <div class="panel-body text-center">
-                                            <div class="large spinner">
-                                                <div>Loading...</div>
-                                            </div>
+                            <div id="waitPanel" class="col-sm-5">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">Next objective in <span id="countDown"></span> seconds...</h3>
+                                    </div>
+                                    <div class="panel-body text-center">
+                                        <div class="large spinner">
+                                            <div>Loading...</div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <hr />
+                            <hr />
 
-                                <div id="south">
-                                    <div class="spawn left"></div>
-                                    <div class="spawn right"></div>
-                                    <div class="spawn middle"></div>
-                                    <h2>South</h2>
-                                </div>
+                            <div id="south">
+                                <div class="spawn left"></div>
+                                <div class="spawn right"></div>
+                                <div class="spawn middle"></div>
+                                <h2>South</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <h4><span id="gameState" class="label label-default"></span></h4>
+                </div>
+
+                <div class="col-sm-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Instructions</h3>
+                        </div>
+                        <div class="panel-body">
+                            <ol>
+                                <li>Add 2 teams</li>
+                                <li>Add 5 players per team</li>
+                                <li>Click on banana! to score</li>
+                                <li>First team with 10 points wins</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Actions</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="btn-group-vertical">
+                                <button type="button" id="addTeam" class="btn btn-default clearfix">
+                                    <span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span>
+                                    Add Team
+                                </button>
+                                <button type="button" id="addPlayer1" class="btn btn-default" disabled="disabled">
+                                    <span class="glyphicon glyphicon-tower" aria-hidden="true"></span>
+                                    Add Player to Team 1
+                                </button>
+                                <button type="button" id="addPlayer2" class="btn btn-default" disabled="disabled">
+                                    <span class="glyphicon glyphicon-knight" aria-hidden="true"></span>
+                                    Add Player to Team 2
+                                </button>
+    <!--
+                                <button type="button" id="generateTurn" class="btn btn-default" disabled="disabled">
+                                    <span class="glyphicon"></span>
+                                    Generate Turn
+                                </button>
+                                <button type="button" id="spawnObjective" class="btn btn-default">
+                                    <span class="glyphicon glyphicon-ice-lolly-tasted" aria-hidden="true"></span>
+                                    Spawn banana!
+                                </button>
+    -->
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-sm-4">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">Actions</h3>
-                            </div>
-                            <div class="panel-body">
-                                <div class="btn-group-vertical">
-                                    <button type="button" id="addTeam" class="btn btn-default clearfix">
-                                        <span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span>
-                                        Add Team
-                                    </button>
-                                    <button type="button" id="addPlayer1" class="btn btn-default">
-                                        <span class="glyphicon glyphicon-tower" aria-hidden="true"></span>
-                                        Add Player to Team 1
-                                    </button>
-                                    <button type="button" id="addPlayer2" class="btn btn-default">
-                                        <span class="glyphicon glyphicon-knight" aria-hidden="true"></span>
-                                        Add Player to Team 2
-                                    </button>
-<!--
-                                    <button type="button" id="generateTurn" class="btn btn-default">
-                                        <span class="glyphicon"></span>
-                                        Generate Turn
-                                    </button>
--->
-                                    <button type="button" id="spawnObjective" class="btn btn-default">
-                                        <span class="glyphicon"></span>
-                                        Spawn Objective
-                                    </button>
-                                </div>
-                            </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Scoreboard</h3>
                         </div>
-
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">Scoreboard</h3>
-                            </div>
-                            <div class="panel-body">
-                                <div>Team 1 - Score: <span id="score1">0</span>
-                                    <div id="players1"></div>
+                        <div class="panel-body">
+                            <div>Team 1 - Score: <span id="score1">0</span>
+                                <div id="players1" class="hide panel panel-primary team1">
+                                    <div class="panel-body"></div>
                                 </div>
-                                <div>Team 2 - Score: <span id="score2">0</span>
-                                    <div id="players2"></div>
+                            </div>
+                            <div>Team 2 - Score: <span id="score2">0</span>
+                                <div id="players2" class="hide panel panel-danger team2">
+                                    <div class="panel-body"></div>
                                 </div>
                             </div>
                         </div>

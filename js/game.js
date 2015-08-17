@@ -132,8 +132,8 @@ function Game() {
   $("#addTeam").on("click", $.proxy(function() { this.addTeam(new Team()); }, this));
   $("#addPlayer1").on("click", $.proxy(function() { this.addPlayerToTeam(1); }, this));
   $("#addPlayer2").on("click", $.proxy(function() { this.addPlayerToTeam(2); }, this));
-  $("#spawnObjective").on("click", $.proxy(this.increaseObjectiveRoundNumber, this));
-  $("#generateTurn").on("click", function(){ $(document).trigger("generateTurn"); });
+  //$("#spawnObjective").on("click", $.proxy(this.increaseObjectiveRoundNumber, this));
+  $("#generateTurn").on("click", function(){ $(document).trigger("generateTurn");} );
 
 }
 
@@ -146,8 +146,10 @@ Game.prototype = {
     "ObjectiveEnded",
     "GameEnded"
   ],
-  interval:   5000, // 5 seconds
-  scoreToWin: 10,
+  interval:         5000, // 5 seconds
+  requiredTeams:    2,
+  requiredPlayers:  5,
+  scoreToWin:       10,
 
   addTeam: function(newTeam) {
     var rule1failed = Rules.twoTeamsRequired(this.teams);
@@ -156,15 +158,18 @@ Game.prototype = {
     if (rule1failed || rule2failed) {
       // do not add team
       console.log("[addTeam]\tYou cannot exceed the Allowed Number of Teams for the Game");
-      $("#alert .message").text("You cannot exceed the Allowed Number of Teams for the Game");
-      $("#alert").show();
+      this.showMessage("You cannot exceed the Allowed Number of Teams for the Game");
     } else {
       $("#alert").hide();
       this.teams.push(newTeam);
       var teamIndex = this.teams.length;
-      //this.drawTeam(teamIndex);
+      this.drawTeam(teamIndex);
+      if(Rules.twoTeamsRequired(this.teams)) {
+        $(document).trigger("setState", "WaitingForRequiredPlayers");
+      }
     }
   },
+
   addPlayerToTeam:  function(teamNumber) {
     console.log("[addPlayerToTeam]\tTeam " + teamNumber);
     if(teamNumber <= this.teams.length) {
@@ -173,18 +178,21 @@ Game.prototype = {
       if(Rules.fivePlayersRequired(selectedTeam)) {
         // don't add player
         console.log("[addPlayerToTeam]\tYou cannot exceed the Allowed Number of Players for the Game");
-        $("#alert .message").text("You cannot exceed the Allowed Number of Players for the Game");
-        $("#alert").show();
+        this.showMessage("You cannot exceed the Allowed Number of Players for the Game");
       } else {
-        $("#alert").hide();
         selectedTeam.addPlayer(new Player());
-        var imgName = (teamNumber==1)? "minion" : "evil_minion";
-        $("#players"+teamNumber).append("<img src='img/"+imgName+".png'/>");
+        $("#alert").hide();
+        this.drawPlayer(teamNumber);
+        if(Rules.twoTeamsRequired(this.teams)
+            && Rules.fivePlayersRequired(this.teams[0])
+            && Rules.fivePlayersRequired(this.teams[1])) {
+          $("#generateTurn").removeAttr("disabled");
+          $(document).trigger("setState", "GameStarted");
+        }
       }
     } else {
       console.log("[addPlayerToTeam]\tAdd teams, first");
-      $("#alert .message").text("Add teams, first");
-      $("#alert").show();
+      this.showMessage("Add teams, first");
     }
   },
 
@@ -194,39 +202,63 @@ Game.prototype = {
 
 
     switch (this.state) {
+      case "WaitingForRequiredTeams":
+        this.drawState("Waiting for Required Teams");
+        break;
+
+      case "WaitingForRequiredPlayers":
+        this.drawState("Waiting for Required Players");
+        break;
+
       case "GameStarted":
+        this.drawState("Game Started");
         if (this.turnNumber == 0) {
-          $(document).trigger("generateTurn");
+          setTimeout(function() {
+            $(document).trigger("generateTurn");
+          }, 2000);
+
         }
         break;
 
       case "ObjectiveStarted":
+        this.drawState("Objective Started");
         this.increaseObjectiveRoundNumber();
         break;
 
       case "ObjectiveEnded":
+        this.drawState("Objective Ended");
         // Scenario: Ten Points meets the Score Requirement
-          var gameEnded = false;
-          var self = this;
-          $.each(this.teams, function(index, team) {
-            if(team.score >= self.scoreToWin) {
-              self.winningTeam = index + 1;
-              gameEnded = true;
-              $(document).trigger("setState", "GameEnded");
-            }
-          });
+          var winningTeam = (this.teams[0].score == this.scoreToWin)? 1 :
+              (this.teams[1].score == this.scoreToWin)? 2 : -1;
+          if(winningTeam > -1) {
+            this.winningTeam = winningTeam;
+            $(document).trigger("setState", "GameEnded");
+            return;
+          }
 
-        if (!gameEnded) {
-          $("#waitPanel").show();
-          setTimeout(function () {
-            $(document).trigger("generateTurn");
-          }, this.interval);
+
+        // start countdown
+        $("#waitPanel").show();
+        var counter = this.interval / 1000;
+        var countDownFunction = function() {
+          $("#countDown").text(counter);
+          if(counter-- == 0) {
+            clearInterval(countDownInterval);
+            $("#waitPanel").hide();
+          }
         }
+        countDownFunction();
+        var countDownInterval = setInterval(countDownFunction, 1000);
+
+        setTimeout(function () {
+          $(document).trigger("generateTurn");
+        }, this.interval);
         break;
 
       case "GameEnded":
-        $("#alert .message").text("Team "+this.winningTeam+" has won the Game!");
-        $("#alert").show();
+        this.drawState("Game Ended");
+        this.showMessage("Team "+this.winningTeam+" has won the Game! <br/>" +
+          "Restart? <a href='#' class='label label-success' onclick='restartGame()'>yes</a> no");
         break;
     }
 
@@ -272,19 +304,20 @@ Game.prototype = {
   },
 
   spawnObjective: function() {
-    var x, y, oppositeY;
+    var x, y, oppositeY, maxTries = 12;
 
     if(this.objectiveRoundNumber == 1) {
       x = Math.floor(Math.random() * 3);
       y = Math.floor(Math.random() * 2);
       oppositeY = Math.abs(y- 1);
       this.spawnpoints[y][x] = "enabled";
+      // Spawnpoint Rule 2 (disable for next round)
       this.spawnpoints[oppositeY][x] = "disabled";
       //console.log("turn: "+this.objectiveRoundNumber+", rule0 x:"+x+", y:"+y);
     } else {
 
   LABEL:
-      for(var i=0; i<12; i++) {
+      for(var i=0; i<maxTries; i++) {
         x = Math.floor(Math.random() * 3);
         y = Math.floor(Math.random() * 2);
         oppositeY = Math.abs(y- 1);
@@ -342,33 +375,34 @@ Game.prototype = {
     //console.log("[spawnObjective] round:" + this.objectiveRoundNumber+", result:",result);
     this.drawObjective(y, x);
 
+  },
+
+  completeObjective: function() {
     var newObjective = new Objective(true);
     var scoringTeamIndex = Rules.meetObjectiveRequirements(this.state, newObjective);
     if (scoringTeamIndex > -1) {
       this.teams[scoringTeamIndex].objective = newObjective;
-    }
-  },
+      this.showMessage("Team "+(scoringTeamIndex+1)+" scores!");
+      // Scenario: Get Points for Complete Objectives
+      this.teams[scoringTeamIndex].score++;
+      this.drawScore(scoringTeamIndex);
 
-  completeObjective: function(teamIndex, objectiveReference) {
-    console.log("[completeObjective] teamIndex:"+ teamIndex);
-/*
-    console.log("[completeObjective] requirement:"+ objectiveReference.requirement.met);
-    this.objective = objectiveReference;
-    if (this.objective.requirement.met) {
-      this.objective.completed = true;
+      setTimeout(function() { $(document).trigger("setState", "ObjectiveEnded"); }, 1000);
     }
+    console.log("[completeObjective] teamIndex:"+ scoringTeamIndex);
 
-*/
-    $(document).trigger("setState", "ObjectiveEnded");
-    // Scenario: Get Points for Complete Objectives
-    this.teams[teamIndex].score++;
-    this.drawScore(teamIndex);
+
   },
 
   drawTeam: function(teamNumber) {
     //console.log("[drawTeam]\t Team number: "+teamNumber);
-    var mapField = (teamNumber == 1)? "#north .left" : "#south .right";
-    $(mapField).removeClass("team1 team2").addClass("team"+teamNumber);
+    $("#players"+teamNumber).removeClass("hide");
+    $("#addPlayer"+teamNumber).removeAttr("disabled");
+  },
+
+  drawPlayer: function(teamNumber) {
+    var imgName = (teamNumber==1)? "minion" : "evil_minion";
+    $("#players"+teamNumber+" .panel-body").append("<img src='img/"+imgName+".png'/>");
   },
 
   drawObjective: function(yParam, xParam) {
@@ -387,24 +421,49 @@ Game.prototype = {
     }
 
     var objective = $("<img src='img/banana.png' role='button'/>");
-    objective.on("click", $.proxy(function() { this.completeObjective(yParam); }, this));
+    objective.on("click", $.proxy(function() {
+      objective.addClass("forbidden");
+      objective.removeAttr("role").off("click");
+      this.completeObjective(yParam);
+    }, this));
     $(yArray[yParam] + xArray[xParam]).append(objective);
   },
 
   drawScore: function(teamIndex) {
     var selectedTeam = this.teams[teamIndex];
     $("#score"+(teamIndex+1)).text(selectedTeam.score);
+  },
+
+  drawState:  function(message) {
+    var cssStates = ["default", "info", "primary", "success", "warning", "danger"];
+    var stateIndex = $.inArray(this.state, this.states);
+    if(stateIndex > -1) {
+      var cssClass = "label label-" + cssStates[stateIndex];
+      $("#gameState").removeClass().addClass(cssClass);
+    }
+    $("#gameState").text(message);
+
+  },
+  showMessage:  function(message) {
+    $("#alert .message").html(message);
+    $("#alert").show();
   }
 };
 
 function startGame() {
   var game = new Game();
+  $(document).trigger("setState", "WaitingForRequiredTeams");
+/*
   game.addTeam(new Team());
   game.addTeam(new Team());
   for(var p=1; p<=5; p++) {
     game.addPlayerToTeam(1);
     game.addPlayerToTeam(2);
   }
-  $(document).trigger("setState", "GameStarted");
+*/
 
+}
+
+function restartGame() {
+  location.reload(true);
 }

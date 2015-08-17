@@ -13,6 +13,7 @@ h2 {
     border-radius: 20px;
 }
 
+
 .spawn.disabled {
     border: none;
 }
@@ -27,12 +28,16 @@ h2 {
 }
 
 .team1 {
-    background-image: url("../img/german_flag.jpg")
-}
-.team2 {
+    height: 68px;
     background-image: url("../img/queensland_flag.jpg")
 }
-
+.team2 {
+    height: 68px;
+    background-image: url("../img/german_flag.jpg")
+}
+.forbidden {
+    background-image: url("../img/forbidden.png")
+}
 #alert,
 #waitPanel {
     display: none;

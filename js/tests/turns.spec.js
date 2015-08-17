@@ -11,7 +11,7 @@ describe("Turns", function() {
         beforeEach(function() {
             spyEvent = spyOnEvent(document, "generateTurn");
         });
-        it("Game starting", function () {
+        xit("Game starting", function () {
             $(document).trigger("setState", "GameStarted");
             expect(spyEvent).toHaveBeenTriggered();
         });
@@ -38,7 +38,7 @@ describe("Turns", function() {
         });
     });
     describe("A turn at Game Started changes the State to Objective Started", function () {
-        it("Trigger game start", function () {
+        xit("Trigger game start", function () {
             spyOn(Rules, "meetObjectiveRequirements").and.returnValue(-1);
             $(document).trigger("setState", "GameStarted");
             expect(game.state).toBe("ObjectiveStarted");
@@ -50,7 +50,7 @@ describe("Turns", function() {
         });
     });
     describe("Generating a Turn should increase the Turn Number by 1", function () {
-        it("Start game", function () {
+        xit("Start game", function () {
             expect(game.turnNumber).toBe(0);
             $(document).trigger("setState", "GameStarted");
             expect(game.turnNumber).toBe(1);
