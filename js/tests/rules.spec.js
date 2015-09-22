@@ -1,5 +1,5 @@
 describe("Rules Game-Master", function() {
-    var game;
+    var game, turnTimer = 2050, objectiveTimer = 1050;
     beforeEach(function() {
         game = new Game("game");
     });
@@ -56,25 +56,31 @@ describe("Rules Game-Master", function() {
             game.addTeam(new Team());
         });
 
-        xit("Iterate through game states", function () {
+        it("Iterate through game states", function (done) {
             expect(game.objectiveRoundNumber).toBe(0);
             $(document).trigger("setState", "WaitingForRequiredTeams");
             expect(game.objectiveRoundNumber).toBe(0);
             $(document).trigger("setState", "WaitingForRequiredPlayers");
             expect(game.objectiveRoundNumber).toBe(0);
             $(document).trigger("setState", "GameStarted");
-            expect(game.objectiveRoundNumber).toBe(1);
+            setTimeout(function() {
+                expect(game.objectiveRoundNumber).toBe(1);
+                done();
+            }, turnTimer);
             $(document).trigger("setState", "ObjectiveStarted");
-            expect(game.objectiveRoundNumber).toBe(2);
+            expect(game.objectiveRoundNumber).toBe(1);
             $(document).trigger("setState", "ObjectiveEnded");
-            expect(game.objectiveRoundNumber).toBe(2);
+            expect(game.objectiveRoundNumber).toBe(1);
             $(document).trigger("setState", "GameEnded");
-            expect(game.objectiveRoundNumber).toBe(2);
+            expect(game.objectiveRoundNumber).toBe(1);
         });
-        xit("from 'GameStarted' ", function () {
+        it("from 'GameStarted' ", function (done) {
             expect(game.objectiveRoundNumber).toBe(0);
             $(document).trigger("setState", "GameStarted");
-            expect(game.objectiveRoundNumber).toBe(1);
+            setTimeout(function() {
+                expect(game.objectiveRoundNumber).toBe(1);
+                done();
+            }, turnTimer);
         });
         it("from 'ObjectiveStarted' ", function () {
             expect(game.objectiveRoundNumber).toBe(0);
@@ -107,7 +113,7 @@ describe("Rules Game-Master", function() {
         });
     });
 
-    xdescribe("Meet the Objective Requirements for a Round", function () {
+    describe("Meet the Objective Requirements for a Round", function () {
         var firstTeam, secondTeam;
         beforeEach(function() {
             firstTeam = new Team();
@@ -115,22 +121,23 @@ describe("Rules Game-Master", function() {
             secondTeam = new Team();
             game.addTeam(secondTeam);
             spyOn(Rules, "meetObjectiveRequirements").and.callThrough();
+            spyOn(game, "spawnObjective").and.callThrough();
         });
         it("from 'ObjectiveStarted'", function () {
             $(document).trigger("setState", "ObjectiveStarted");
-            game.spawnObjective();
-            var team1scored = firstTeam.objective && firstTeam.objective.requirement.met  || false;
-            var team2scored = secondTeam.objective && secondTeam.objective.requirement.met || false;
+            game.completeObjective();
+            var team1scored = firstTeam.objective && firstTeam.objective.requirement.met;
+            var team2scored = secondTeam.objective && secondTeam.objective.requirement.met;
+            expect(game.spawnObjective).toHaveBeenCalled();
             expect(Rules.meetObjectiveRequirements).toHaveBeenCalled();
             expect(team1scored || team2scored).toBe(true);
         });
         it("- from 'ObjectiveEnded'", function () {
             $(document).trigger("setState", "ObjectiveEnded");
-            game.spawnObjective();
-            var team1scored = firstTeam.objective && firstTeam.objective.requirement.met  || false;
-            var team2scored = secondTeam.objective && secondTeam.objective.requirement.met || false;
-            expect(Rules.meetObjectiveRequirements).toHaveBeenCalled();
-            expect(team1scored && team2scored).toBe(false);
+            var team1scored = firstTeam.objective;
+            var team2scored = secondTeam.objective;
+            expect(game.spawnObjective).not.toHaveBeenCalled();
+            expect(team1scored && team2scored).toBe(undefined);
         });
     });
 
@@ -149,22 +156,22 @@ describe("Rules Game-Master", function() {
             setTimeout(function() {
                 expect(game.state).toBe("ObjectiveEnded");
                 done();
-            }, 1100);
+            }, objectiveTimer);
         });
         it("Team 2 scores", function (done) {
             game.completeObjective(new Objective(true));
             setTimeout(function() {
                 expect(game.state).toBe("ObjectiveEnded");
                 done();
-            }, 1100);
+            }, objectiveTimer);
         });
         it("- No team scores", function (done) {
             game.completeObjective(new Objective(false));
             game.completeObjective(new Objective(false));
             setTimeout(function() {
-                expect(game.state).not.toBe("ObjectiveEnded");
+                expect(game.state).toBe("ObjectiveEnded");
                 done();
-            }, 1100);
+            }, objectiveTimer);
         });
     });
 });

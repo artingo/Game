@@ -1,5 +1,5 @@
 describe("Turns", function() {
-    var game;
+    var game, turnTimer = 2050;
     beforeEach(function() {
         game = new Game("game");
         game.addTeam(new Team());
@@ -11,9 +11,12 @@ describe("Turns", function() {
         beforeEach(function() {
             spyEvent = spyOnEvent(document, "generateTurn");
         });
-        xit("Game starting", function () {
+        it("Game starting", function (done) {
             $(document).trigger("setState", "GameStarted");
-            expect(spyEvent).toHaveBeenTriggered();
+            setTimeout(function() {
+                expect(spyEvent).toHaveBeenTriggered();
+                done();
+            }, turnTimer);
         });
         it("- Turn Number > 0", function () {
             game.turnNumber = 1;
@@ -38,10 +41,13 @@ describe("Turns", function() {
         });
     });
     describe("A turn at Game Started changes the State to Objective Started", function () {
-        xit("Trigger game start", function () {
+        it("Trigger game start", function (done) {
             spyOn(Rules, "meetObjectiveRequirements").and.returnValue(-1);
             $(document).trigger("setState", "GameStarted");
-            expect(game.state).toBe("ObjectiveStarted");
+            setTimeout(function() {
+                expect(game.state).toBe("ObjectiveStarted");
+                done();
+            }, turnTimer);
         });
         it("- Wait for players", function () {
             $(document).trigger("setState", "WaitingForRequiredPlayers");
@@ -50,10 +56,13 @@ describe("Turns", function() {
         });
     });
     describe("Generating a Turn should increase the Turn Number by 1", function () {
-        xit("Start game", function () {
+        it("Start game", function (done) {
             expect(game.turnNumber).toBe(0);
             $(document).trigger("setState", "GameStarted");
-            expect(game.turnNumber).toBe(1);
+            setTimeout(function() {
+                expect(game.turnNumber).toBe(1);
+                done();
+            }, turnTimer);
         });
         it("Generate turns", function () {
             $(document).trigger("generateTurn");
