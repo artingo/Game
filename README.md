@@ -6,7 +6,7 @@ I chose a test-driven approach and wrote Jasmine unit tests for the implemented 
 The game triggers events to change state and generate turns. Additionally, there are buttons to trigger functions manually. Look at the JavaScript console to see the execution flow.
     
 You can testdrive a working copy on: 
-[http://artingo.de/game/jGame.html](http://artingo.de/game/jGame.html)
+[http://artingo.net/game/jGame.html](http://artingo.net/game/jGame.html)
 
 Best regards,
 
