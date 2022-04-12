@@ -7,4 +7,4 @@ The game triggers events to change state and generate turns. Additionally, there
     
 Best regards,
 
-**_Fred Walther_**
+**_Fredie Walker_**
