@@ -5,6 +5,6 @@ I chose a test-driven approach and wrote Jasmine unit tests for the implemented 
 
 The game triggers events to change state and generate turns. Additionally, there are buttons to trigger functions manually. Look at the JavaScript console to see the execution flow.
     
-Best regards,
+Merci beaucoup,
 
 **_Fredie Walker_**
